@@ -13,6 +13,37 @@ The platform initially only used OpenAI’s cloud-based models via API but has s
 
 ---
 
+## 🔧 Project Structure
+
+```
+SDP_Project/
+├── cenai_app/              # Core web application (frontend + backend)
+│   ├── backend/            # Node.js server (OpenAI or Ollama + RAG logic)
+│   ├── frontend/           # Static site (HTML/CSS/JS)
+│   ├── php/                # PHPCAS login (NetID-based auth)
+│   ├── chat.logs/          # SQLite DB for message history (ignored)
+│   ├── node_modules/       # Node packages (ignored)
+│   ├── vendor/             # Composer packages (ignored)
+│   ├── .env                # API keys and secrets (ignored)
+│   ├── package*.json       # Node dependency definitions
+│   ├── composer*.json      # PHP dependency definitions
+│   └── README.md           # App-specific docs (optional)
+│
+├── retrieval/              # All Python-based RAG + vector store logic
+│   ├── *.py                # Scripts for preprocessing & vector DB
+│   ├── *.json              # Embeddable HR/technical documents
+│   └── start-chroma.sh     # ChromaDB launch script
+│
+├── scripts/                # Bootstrapping, orchestration, system utils
+│   └── spin-up.sh          # tmux-based launcher for Node, PHP, Chroma
+│
+├── README.md               # Main documentation (you're reading it)
+└── .gitignore              # Prevent secrets and dependencies from uploading
+
+```
+
+---
+
 ## 🔧 Tech Stack
 
 - **Frontend**: HTML/CSS/JS served via Node.js
@@ -78,21 +109,78 @@ pip install chromadb
 
 ---
 
-## 🔧 Project Structure
+## 🔍 Retrieval Pipeline (ChromaDB + JSON Ingestion)
+
+The **retrieval** directory includes scripts and documents for building the ChromaDB vector store. The pipeline uses `.json` files containing HR policies or engineering docs and passes them into Chroma for indexing.
+
+### Preprocessing & Upload
+
+- `upload_to_chroma.py`: Ingests local JSON docs and populates Chroma with embeddings.
+- `start-chroma.sh`: Boots the local Chroma server (`chroma run --path chroma_data`).
+- `langchain_experiment.py`: Alternative Python-based RAG handler.
+
+You can update or re-ingest new source files by modifying the relevant `.json` (e.g., `ethics.json`, `ctgov-site.json`) and re-running the upload script.
+
+---
+
+## 🗃 Chroma Vector Store Setup
+
+CenAI uses a self-hosted **ChromaDB** instance via the Python client. It is run separately and accessed from Node via REST API.
+
+### Chroma Server
+
+```bash
+cd retrieval
+./start-chroma.sh
+```
+
+> This launches Chroma on port `:9000`. Make sure this path is reverse-proxied through `nginx`.
+
+You can also test the status with:
+
+```bash
+curl http://localhost:9000/api/v1/heartbeat
+```
+
+---
+
+## 🌐 nginx Reverse Proxy
+
+nginx handles routing traffic to various services:
+
+| Path Prefix | Destination             |
+|-------------|-------------------------|
+| `/index/`   | Node backend on `:10000`|
+| `/ollama/`  | Ollama API on `:11434`  |
+| `/chroma/`  | ChromaDB on `:9000`     |
+| `/`         | PHP login on `:8000`    |
+
+### nginx Config
+
+The nginx reverse proxy config is located at:
 
 ```
-cenai/
-├── backend/           # Node.js server (OpenAI or Ollama + RAG logic)
-│   └── server.js
-├── frontend/          # Static site (HTML/CSS/JS)
-├── php/               # PHPCAS login
-├── retrieval_docs/    # Python code for RAG (ChromaDB, preprocessing)
-├── .env               # API keys and config (not included)
-├── chat.logs/         # SQLite DB (ignored)
-├── node_modules/      # Node packages (ignored)
-├── vendor/            # Composer packages (ignored)
-├── spin-up.sh         # Script to launch all services with tmux
+/etc/nginx/sites-available/reverse-proxy
 ```
+
+Make sure it is linked to `sites-enabled`:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/reverse-proxy /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+```
+
+---
+
+## 📜 Scripts Overview
+
+The `scripts/` folder contains supporting utilities:
+
+- `spin-up.sh`: TMUX-based launcher for Chroma, Node, and PHP services.
+- `check_chroma.py`: Heartbeat test for Chroma availability.
+- `upload_to_chroma.py`: Loads documents from `.json` files into Chroma.
+
+These scripts can be chained in a deployment pipeline or cron job if needed.
 
 ---
 
