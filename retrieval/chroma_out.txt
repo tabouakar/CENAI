@@ -1,0 +1,437 @@
+[1m
+
+                [38;5;069m(((((((((    [38;5;203m((((([38;5;220m####
+             [38;5;069m((((((((((((([38;5;203m((((((((([38;5;220m#########
+           [38;5;069m((((((((((((([38;5;203m((((((((((([38;5;220m###########
+         [38;5;069m(((((((((((((([38;5;203m(((((((((((([38;5;220m############
+        [38;5;069m((((((((((((([38;5;203m(((((((((((((([38;5;220m#############
+        [38;5;069m((((((((((((([38;5;203m(((((((((((((([38;5;220m#############
+         [38;5;069m(((((((((((([38;5;203m((((((((((((([38;5;220m##############
+         [38;5;069m(((((((((((([38;5;203m(((((((((((([38;5;220m##############
+           [38;5;069m(((((((((([38;5;203m((((((((((([38;5;220m#############
+             [38;5;069m(((((((([38;5;203m(((((((([38;5;220m##############
+                [38;5;069m((((([38;5;203m((((    [38;5;220m#########[0m
+
+    
+[1m
+Running Chroma
+[0m
+Saving data to: chroma_data/
+Connect to chroma at: http://localhost:9000
+Getting started guide: https://docs.trychroma.com/getting-started
+
+
+INFO:     [06-03-2025 19:04:43] Set chroma_server_nofile to 65535
+INFO:     [06-03-2025 19:04:43] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+DEBUG:    [06-03-2025 19:04:43] Starting component System
+DEBUG:    [06-03-2025 19:04:43] Starting component OpenTelemetryClient
+DEBUG:    [06-03-2025 19:04:43] Starting component SqliteDB
+DEBUG:    [06-03-2025 19:04:43] Starting component SimpleQuotaEnforcer
+DEBUG:    [06-03-2025 19:04:43] Starting component Posthog
+DEBUG:    [06-03-2025 19:04:43] Starting component SimpleRateLimitEnforcer
+DEBUG:    [06-03-2025 19:04:43] Starting component LocalSegmentManager
+DEBUG:    [06-03-2025 19:04:43] Starting component LocalExecutor
+DEBUG:    [06-03-2025 19:04:43] Starting component SegmentAPI
+DEBUG:    [06-03-2025 19:04:43] Starting component SimpleAsyncRateLimitEnforcer
+INFO:     [06-03-2025 19:04:43] Started server process [10230]
+INFO:     [06-03-2025 19:04:43] Waiting for application startup.
+INFO:     [06-03-2025 19:04:43] Application startup complete.
+INFO:     [06-03-2025 19:04:43] Uvicorn running on http://localhost:9000 (Press CTRL+C to quit)
+INFO:     [06-03-2025 19:09:48] 127.0.0.1:56594 - "GET / HTTP/1.0" 400
+ERROR:    [06-03-2025 19:09:48] Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 111, in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 106, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 124, in receive
+    return receiver.item
+           ^^^^^^^^^^^^^
+AttributeError: 'MemoryObjectItemReceiver' object has no attribute 'item'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 147, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 126, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 743, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 120, in catch_exceptions_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 153, in call_next
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 173, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/usr/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_utils.py", line 82, in collapse_excgroups
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 175, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 143, in check_http_version_middleware
+    raise InvalidHTTPVersion(f"HTTP version {http_version} is not supported")
+chromadb.errors.InvalidHTTPVersion: HTTP version 1.0 is not supported
+INFO:     [06-03-2025 19:22:49] 127.0.0.1:51646 - "GET / HTTP/1.0" 400
+ERROR:    [06-03-2025 19:22:49] Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 111, in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 106, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 124, in receive
+    return receiver.item
+           ^^^^^^^^^^^^^
+AttributeError: 'MemoryObjectItemReceiver' object has no attribute 'item'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 147, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 126, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 743, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 120, in catch_exceptions_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 153, in call_next
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 173, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/usr/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_utils.py", line 82, in collapse_excgroups
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 175, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 143, in check_http_version_middleware
+    raise InvalidHTTPVersion(f"HTTP version {http_version} is not supported")
+chromadb.errors.InvalidHTTPVersion: HTTP version 1.0 is not supported
+INFO:     [06-03-2025 19:23:56] 127.0.0.1:49638 - "GET /api/v1/collections HTTP/1.1" 400
+ERROR:    [06-03-2025 19:23:56] Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 111, in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 106, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 124, in receive
+    return receiver.item
+           ^^^^^^^^^^^^^
+AttributeError: 'MemoryObjectItemReceiver' object has no attribute 'item'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 147, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 126, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 743, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 120, in catch_exceptions_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 153, in call_next
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 173, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/usr/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_utils.py", line 82, in collapse_excgroups
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 175, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 144, in check_http_version_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 153, in call_next
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/telemetry/opentelemetry/__init__.py", line 134, in async_wrapper
+    return await f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 92, in wrapper
+    return await self._async_rate_limit_enforcer.rate_limit(func)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/rate_limit/simple_rate_limit/__init__.py", line 41, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 1590, in list_collections_v1
+    (
+TypeError: cannot unpack non-iterable coroutine object
+INFO:     [06-03-2025 19:24:04] 127.0.0.1:49640 - "GET /api/v1/collections HTTP/1.1" 400
+ERROR:    [06-03-2025 19:24:04] Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 111, in receive
+    return self.receive_nowait()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 106, in receive_nowait
+    raise WouldBlock
+anyio.WouldBlock
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 124, in receive
+    return receiver.item
+           ^^^^^^^^^^^^^
+AttributeError: 'MemoryObjectItemReceiver' object has no attribute 'item'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 147, in call_next
+    message = await recv_stream.receive()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/anyio/streams/memory.py", line 126, in receive
+    raise EndOfStream
+anyio.EndOfStream
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/protocols/http/httptools_impl.py", line 409, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/opentelemetry/instrumentation/asgi/__init__.py", line 743, in __call__
+    await self.app(scope, otel_receive, otel_send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 181, in __call__
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 120, in catch_exceptions_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 153, in call_next
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 173, in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+  File "/usr/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_utils.py", line 82, in collapse_excgroups
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 175, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 144, in check_http_version_middleware
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 153, in call_next
+    raise app_exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/base.py", line 140, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/telemetry/opentelemetry/__init__.py", line 134, in async_wrapper
+    return await f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 92, in wrapper
+    return await self._async_rate_limit_enforcer.rate_limit(func)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/rate_limit/simple_rate_limit/__init__.py", line 41, in wrapper
+    return await func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/team/retrieval_docs/.venv/lib/python3.12/site-packages/chromadb/server/fastapi/__init__.py", line 1590, in list_collections_v1
+    (
+TypeError: cannot unpack non-iterable coroutine object
+INFO:     [06-03-2025 19:24:21] 127.0.0.1:48474 - "GET / HTTP/1.1" 404
+INFO:     [06-03-2025 19:24:25] 127.0.0.1:58724 - "GET /collections HTTP/1.1" 404
+INFO:     [06-03-2025 19:25:50] Shutting down
+INFO:     [06-03-2025 19:25:50] Waiting for application shutdown.
+DEBUG:    [06-03-2025 19:25:50] Stopping component System
+DEBUG:    [06-03-2025 19:25:50] Stopping component SegmentAPI
+DEBUG:    [06-03-2025 19:25:50] Stopping component LocalExecutor
+DEBUG:    [06-03-2025 19:25:50] Stopping component LocalSegmentManager
+DEBUG:    [06-03-2025 19:25:50] Stopping component SimpleAsyncRateLimitEnforcer
+DEBUG:    [06-03-2025 19:25:50] Stopping component SimpleRateLimitEnforcer
+DEBUG:    [06-03-2025 19:25:50] Stopping component Posthog
+DEBUG:    [06-03-2025 19:25:50] Stopping component SimpleQuotaEnforcer
+DEBUG:    [06-03-2025 19:25:50] Stopping component SqliteDB
+DEBUG:    [06-03-2025 19:25:50] Stopping component OpenTelemetryClient
+INFO:     [06-03-2025 19:25:50] Application shutdown complete.
+INFO:     [06-03-2025 19:25:50] Finished server process [10230]

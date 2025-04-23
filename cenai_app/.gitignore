@@ -1,0 +1,18 @@
+# Node and PHP dependencies
+node_modules/
+vendor/
+
+# API key and logs
+.env
+chat.logs
+
+# model files and large data
+*.gguf
+chroma_data/
+
+# random stuff
+NOTES.md
+
+#chroma_db stuff, vectorized database is regenerated on startup
+retrieval/chroma_data/
+retrieval/chroma_db/
