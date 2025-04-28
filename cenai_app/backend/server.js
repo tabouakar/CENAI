@@ -29,27 +29,16 @@ app.use(session({
 
 app.use(cookieParser());
 app.use((req, res, next) => {
-    const authUser = req.cookies.auth_user; // Read cookie from request
-
-    if (!authUser) {
-        return res.redirect('//cenai.cse.uconn.edu/');
-    }
-
-    // Store user in session
-    req.session.user = authUser; 
+    const authUser = req.cookies.auth_user;
+    if (!authUser) return res.redirect('//cenai.cse.uconn.edu/');
+    req.session.user = authUser;
     next();
 });
 
-// Serve static files from the frontend directory
+// Serve static frontend
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-const openai = new OpenAI({
-	apiKey : process.env.OPENAI_API_KEY,
-});
-
-const raw_hr_instr = fs.readFileSync('/opt/team/cenai/backend/HR_SYS_INSTRUCTIONS', 'utf8');
-
-// Configure sqlite
+// SQLite setup
 const db = new sqlite3.Database('chat.logs');
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS Logs (
@@ -60,124 +49,102 @@ db.serialize(() => {
     )`);
 });
 
+// Load system instructions
+const raw_hr_instr = fs.readFileSync('/opt/team/cenai/backend/HR_SYS_INSTRUCTIONS', 'utf8');
+
+// Ollama-based local request handler
 async function ollama_request(model, collection_name, input, res) {
-	// First, query Chroma for relevant info:
-	const client = new ChromaClient({
-		path: "https://cenai.cse.uconn.edu/chroma/"
-   	});
- 	const t_colls = await client.listCollections();
-	const collection = await client.getCollection({
-		name: collection_name 
-	});
-	const results = await collection.query({
-		queryTexts: input,
-		nResults: 1,
-	});
-	console.log(results);
+    const client = new ChromaClient({ path: "https://cenai.cse.uconn.edu/chroma/" });
+    const collection = await client.getCollection({ name: collection_name });
+    const results = await collection.query({ queryTexts: input, nResults: 1 });
+    console.log(results);
 
-	// Then, send the full query to Ollama
-	res.setHeader("Content-Type", "text/plain");
-	res.setHeader("Transfer-Encoding", "chunked");
-	res.setHeader("Cache-Control", "no-cache");
-	res.setHeader("Connection", "keep-alive");
-	res.flushHeaders();
+    res.setHeader("Content-Type", "text/plain");
+    res.setHeader("Transfer-Encoding", "chunked");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
 
-	const cisco_url = results.metadatas[0][0].source;
-	var url_string = ``;
-	for (const data of results.metadatas[0]) {
-			url_string += `${data.source} or `;
-	}
-	console.log(url_string);
+    const urls = results.metadatas[0].map(d => d.source).join(" or ");
+    const sys_instructions = raw_hr_instr.replaceAll("[specific URL]", urls);
+    const context = results.documents.join("\n");
+    const prompt = `${sys_instructions}\nUse this context: ${context}\nTo answer this prompt: ${input}`;
+    
+    const ollama = new Ollama({ host: 'https://cenai.cse.uconn.edu/ollama/' });
+    const response = await ollama.chat({
+        model: 'gemma3:27b',
+        messages: [{ role: 'user', content: prompt }],
+        stream: true
+    });
 
-	const sys_instructions = raw_hr_instr.replaceAll("[specific URL]", url_string);
-	const instruction = {role: 'system', content:sys_instructions};
-
-	var context_string = ``;
-	for (const doc of results.documents) {
-			context_string += `${doc}\n`;
-	}
-
-	user_prompt = sys_instructions + `\n` + `Use this context: ${context_string}\n To answer this prompt: ${input}`;
-	const message = {role: 'user', content: user_prompt};
-
-	const ollama = new Ollama({host: 'https://cenai.cse.uconn.edu/ollama/'})
-	const assistantResponse = await ollama.chat({
-		model:'gemma3:27b',
-		messages:[message], 
-		stream:true,
-	});
-	    
-	for await (const chunk of assistantResponse) {
-		console.log(chunk.message.content);
-		res.write(chunk.message.content);
-	}
-	res.end();
-
+    for await (const chunk of response) {
+        console.log(chunk.message.content);
+        res.write(chunk.message.content);
+    }
+    res.end();
 }
 
+// ChatGPT-based fallback handler
 async function chatGPT_request(input, res) {
+    try {
+        if (!process.env.OPENAI_API_KEY || !process.env.ASSISTANT_ID) {
+            res.status(400).json({
+                error: "OpenAI API is not configured Add an API key and Assistant ID to .env to enable this feature."
+            });
+            return;
+        }
 
-	const thread = await openai.beta.threads.create();
-	await openai.beta.threads.messages.create(
-		thread.id,
-		{ role: "user", content: input }
-	);
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const thread = await openai.beta.threads.create();
+        await openai.beta.threads.messages.create(thread.id, {
+            role: "user",
+            content: input
+        });
 
-	const run = await openai.beta.threads.runs.create(
-		thread.id,
-		{ assistant_id: process.env.ASSISTANT_ID }
-    );
+        const run = await openai.beta.threads.runs.create(thread.id, {
+            assistant_id: process.env.ASSISTANT_ID
+        });
 
-	let runStatus = await openai.beta.threads.runs.retrieve(
-		thread.id,
-		run.id
-	);
+        let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+        while (runStatus.status !== 'completed') {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+        }
 
-	while (runStatus.status !== 'completed') {
-		await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-		runStatus = await openai.beta.threads.runs.retrieve(
-			thread.id,
-			run.id
-		);
-	}
+        const messages = await openai.beta.threads.messages.list(thread.id);
+        const output = messages.data[0].content[0].text.value;
+        res.write(output);
+        res.end();
 
-	const messages = await openai.beta.threads.messages.list(
-		thread.id
-	);
-
-	for await (const chunk of messages) {
-		console.log(chunk.content[0].text.value);
-		res.write(chunk.content[0].text.value);
-	}
-	res.end();
-
-	// TODO add logging	
+    } catch (err) {
+        console.error("OpenAI error:", err.message);
+        res.status(500).json({ error: "OpenAI GPT failed: " + err.message });
+    }
 }
 
+// Main chat endpoint
 app.post('/api/chat', async (req, res) => {
-    try {	
-        const userInput = req.body.message;
-		const model = req.body.model;
-		const implementation = req.body.implementation;
-		const type = req.body.type;
-		if (implementation == "ollama") {
-			ollama_request(model, type, userInput, res);
-		}
-		if (implementation == "chatGPT") {
-			chatGPT_request(userInput, res);
-		}
-	} catch (error) {
-        console.error('Error:', error);
+    try {
+        const { message, model, implementation, type } = req.body;
+
+        if (implementation === "ollama") {
+            await ollama_request(model, type, message, res);
+        } else if (implementation === "chatGPT") {
+            await chatGPT_request(message, res);
+        } else {
+            res.status(400).json({ error: "Unknown implementation type." });
+        }
+
+    } catch (error) {
+        console.error('Chat handler error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+// Logs endpoints
 app.get('/api/logs', (req, res) => {
     db.all("SELECT * FROM Logs ORDER BY dt DESC", (err, rows) => {
-        if (err) {
-            console.error('Error fetching logs:', err);
-            return res.status(500).json({ error: 'Failed to fetch logs' });
-        }
+        if (err) return res.status(500).json({ error: 'Failed to fetch logs' });
         res.json({ logs: rows });
     });
 });
@@ -185,20 +152,14 @@ app.get('/api/logs', (req, res) => {
 app.get('/api/logs/:sessionId', (req, res) => {
     const { sessionId } = req.params;
     db.all("SELECT * FROM Logs WHERE SessionID = ? ORDER BY dt DESC", [sessionId], (err, rows) => {
-        if (err) {
-            console.error('Error fetching logs:', err);
-            return res.status(500).json({ error: 'Failed to fetch logs' });
-        }
+        if (err) return res.status(500).json({ error: 'Failed to fetch logs' });
         res.json({ logs: rows });
     });
 });
 
 app.delete('/api/deleteAllLogs', (req, res) => {
     db.run("DELETE FROM Logs", function(err) {
-        if (err) {
-            console.error('Error deleting logs:', err);
-            return res.status(500).json({ error: 'Failed to delete logs' });
-        }
+        if (err) return res.status(500).json({ error: 'Failed to delete logs' });
         res.status(200).json({ message: 'All logs deleted' });
     });
 });
@@ -208,41 +169,36 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-// Langchain experiment API Post
-
+// Optional: Langchain experimentation endpoint
 app.post('/api/rag-chat', async (req, res) => {
     try {
         const userInput = req.body.message;
-        const chatHistory = req.body.chatHistory || [];
-
-        // Spawn Python process
         const pythonProcess = spawn('python', ['langchain_experiment.py']);
-        
-        let response = '';
-        let error = '';
 
-        pythonProcess.stdout.on('data', (data) => {
-            response += data.toString();
-        });
+        let response = '', error = '';
+        pythonProcess.stdout.on('data', data => response += data.toString());
+        pythonProcess.stderr.on('data', data => error += data.toString());
 
-        pythonProcess.stderr.on('data', (data) => {
-            error += data.toString();
-        });
-
-        pythonProcess.on('close', (code) => {
+        pythonProcess.on('close', code => {
             if (code !== 0) {
-                res.status(500).json({ error: error });
-                return;
+                res.status(500).json({ error });
+            } else {
+                res.json({ response });
             }
-            res.json({ response: response });
         });
 
-        // Send the question to the Python process
         pythonProcess.stdin.write(userInput + '\n');
         pythonProcess.stdin.end();
 
     } catch (error) {
-        console.error('Error:', error);
         res.status(500).json({ error: error.message });
     }
+});
+
+// Global error handlers
+process.on('uncaughtException', err => {
+    console.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', reason => {
+    console.error('Unhandled Rejection:', reason);
 });
